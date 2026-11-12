@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Users')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container">
+
+    <div th:if="${success}" class="alert alert-success" th:text="${success}"></div>
+
+    <!-- Numbers below come from JdbcTemplate -->
+    <div class="row g-3 mb-4 text-center">
+        <div class="col"><div class="card card-body"><div class="fs-3" th:text="${stats['total']}">0</div>Total users</div></div>
+        <div class="col"><div class="card card-body"><div class="fs-3" th:text="${stats['active_count']}">0</div>Active</div></div>
+        <div class="col"><div class="card card-body"><div class="fs-3" th:text="${stats['admin_count']}">0</div>Admins</div></div>
+        <div class="col"><div class="card card-body"><div class="fs-3" th:text="${stats['manager_count']}">0</div>Managers</div></div>
+        <div class="col"><div class="card card-body"><div class="fs-3" th:text="${stats['user_count']}">0</div>Users</div></div>
+    </div>
+
+    <form class="row g-2 mb-3" th:action="@{/users}" method="get">
+        <div class="col">
+            <input type="text" name="keyword" class="form-control"
+                   placeholder="Search by name or email" th:value="${keyword}">
+        </div>
+        <div class="col-auto">
+            <button type="submit" class="btn btn-primary">Search</button>
+            <a class="btn btn-outline-secondary" th:href="@{/users}">Clear</a>
+        </div>
+    </form>
+
+    <table class="table table-striped align-middle">
+        <thead>
+        <tr>
+            <th th:replace="~{fragments :: sortable('id', 'ID')}"></th>
+            <th th:replace="~{fragments :: sortable('lastName', 'Name')}"></th>
+            <th th:replace="~{fragments :: sortable('email', 'Email')}"></th>
+            <th th:replace="~{fragments :: sortable('username', 'Username')}"></th>
+            <th th:replace="~{fragments :: sortable('role', 'Role')}"></th>
+            <th th:replace="~{fragments :: sortable('active', 'Status')}"></th>
+            <th></th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="u : ${page.content}">
+            <td th:text="${u.id}">1</td>
+            <td><a th:href="@{/users/{id}(id=${u.id})}" th:text="${u.firstName + ' ' + u.lastName}">Name</a></td>
+            <td th:text="${u.email}">email</td>
+            <td th:text="${u.username}">username</td>
+            <td><span class="badge bg-secondary" th:text="${u.role}">USER</span></td>
+            <td>
+                <span class="badge" th:classappend="${u.active} ? 'bg-success' : 'bg-danger'"
+                      th:text="${u.active} ? 'Active' : 'Inactive'">Active</span>
+            </td>
+            <td class="text-end">
+                <a class="btn btn-sm btn-outline-primary" th:href="@{/users/{id}/edit(id=${u.id})}">Edit</a>
+                <a class="btn btn-sm btn-outline-danger" th:href="@{/users/{id}/delete(id=${u.id})}">Delete</a>
+            </td>
+        </tr>
+        <tr th:if="${page.empty}">
+            <td colspan="7" class="text-center text-muted py-4">
+                No users found. <a th:href="@{/users/new}">Create the first user</a>.
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between align-items-center">
+        <span class="text-muted" th:text="${page.totalElements} + ' user(s), page ' + (${page.number} + 1) + ' of ' + (${page.totalPages} == 0 ? 1 : ${page.totalPages})"></span>
+
+        <nav th:if="${page.totalPages > 1}">
+            <ul class="pagination mb-0">
+                <li class="page-item" th:classappend="${page.first} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/users(page=${page.number - 1}, size=${page.size}, sortBy=${sortBy}, dir=${dir}, keyword=${keyword})}">Previous</a>
+                </li>
+                <li class="page-item" th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}"
+                    th:classappend="${i == page.number} ? 'active'">
+                    <a class="page-link"
+                       th:href="@{/users(page=${i}, size=${page.size}, sortBy=${sortBy}, dir=${dir}, keyword=${keyword})}"
+                       th:text="${i + 1}">1</a>
+                </li>
+                <li class="page-item" th:classappend="${page.last} ? 'disabled'">
+                    <a class="page-link"
+                       th:href="@{/users(page=${page.number + 1}, size=${page.size}, sortBy=${sortBy}, dir=${dir}, keyword=${keyword})}">Next</a>
+                </li>
+            </ul>
+        </nav>
+    </div>
+</div>
+</body>
+</html>

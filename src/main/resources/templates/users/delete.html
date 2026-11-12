@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="~{fragments :: head('Delete user')}"></head>
+<body>
+<nav th:replace="~{fragments :: navbar}"></nav>
+
+<div class="container" style="max-width: 620px;">
+    <h1 class="h3 mb-3">Delete this user?</h1>
+    <p>
+        You are about to delete
+        <strong th:text="${user.firstName + ' ' + user.lastName}">Name</strong>
+        (<span th:text="${user.email}">email</span>).
+    </p>
+
+    <form th:action="@{/users/{id}/delete(id=${user.id})}" method="post">
+        <div class="form-check mb-3">
+            <input class="form-check-input" type="checkbox" name="soft" id="soft" value="true">
+            <label class="form-check-label" for="soft">
+                Deactivate only (keep the record, set status to inactive)
+            </label>
+        </div>
+        <button type="submit" class="btn btn-danger">Confirm delete</button>
+        <a class="btn btn-outline-secondary" th:href="@{/users}">Cancel</a>
+    </form>
+</div>
+</body>
+</html>

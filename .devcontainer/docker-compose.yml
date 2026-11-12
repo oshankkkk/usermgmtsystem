@@ -1,0 +1,24 @@
+services:
+  app:
+    image: mcr.microsoft.com/devcontainers/base:bookworm
+    volumes:
+      - ../..:/workspaces:cached
+    command: sleep infinity
+    environment:
+      # These override application.properties inside the Codespace only
+      SPRING_DATASOURCE_URL: "jdbc:sqlserver://db:1433;databaseName=usermgmt;encrypt=true;trustServerCertificate=true"
+      SPRING_DATASOURCE_USERNAME: "sa"
+      SPRING_DATASOURCE_PASSWORD: "YourStrong!Passw0rd"
+    depends_on:
+      - db
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    restart: unless-stopped
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: "YourStrong!Passw0rd"
+      MSSQL_MEMORY_LIMIT_MB: "2048"
+    volumes:
+      - ./init-db.sh:/init-db.sh
+    command: /bin/bash /init-db.sh
