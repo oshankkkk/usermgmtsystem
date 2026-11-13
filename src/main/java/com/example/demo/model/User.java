@@ -16,7 +16,7 @@ public class User {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	private Role role = Role.USER;
+	
     @Nationalized // NVARCHAR instead of VARCHAR
     @Column(name = "first_name", nullable = false, length = 50)
     private String firstName;
