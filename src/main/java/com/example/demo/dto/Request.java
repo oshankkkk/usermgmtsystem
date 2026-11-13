@@ -53,9 +53,6 @@ public class Request {
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
 
-    public String getRole() { return role; }
-    public void setRole(String role) { this.role = role; }
-
     public boolean isActive() { return active; }
     public void setActive(boolean active) { this.active = active; }
 }
